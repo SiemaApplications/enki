@@ -31,7 +31,7 @@ class MQTTInterface(object):
         self.server = None
         self.port = 1883
 
-        self.client = mqtt.Client("enki_%d" % os.getpid(), 1883, 60)
+        self.client = mqtt.Client("enki_%d" % os.getpid(), clean_session=True)
         self.client.user_data_set(self)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
