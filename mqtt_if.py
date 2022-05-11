@@ -29,6 +29,7 @@ class MQTTInterface(object):
 
         super().__init__()
         self.server = None
+        self.port = 1883
 
         self.client = mqtt.Client("enki_%d" % os.getpid(), 1883, 60)
         self.client.user_data_set(self)
@@ -38,9 +39,10 @@ class MQTTInterface(object):
         self.subscribed_topics = ["spBv1.0/#"]
         self.forwarded_topics = {}
 
-    def set_server(self, server):
+    def set_server(self, server, port=1883):
         """Set mqtt server address."""
         self.server = server
+        self.port = port
 
     def get_subscribed_topics(self):
         """Get list of topics subscribed to."""
@@ -118,5 +120,5 @@ class MQTTInterface(object):
         MQTTInterface.__instance = None
 
     def start(self):
-        self.client.connect(self.server, 1883, 60)
+        self.client.connect(self.server, self.port, 60)
         self.client.loop_start()

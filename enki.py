@@ -405,10 +405,11 @@ def main():
     parser = argparse.ArgumentParser(description="View and manipulate sparkplug payload")
     parser.add_argument('--server',
                         help='MQTT broker address', default='localhost')
+    parser.add_argument('--port', help='MQTT broker port', default=1883, type=int)
     args = parser.parse_args()
 
     mqtt_if = MQTTInterface()
-    mqtt_if.set_server(args.server)
+    mqtt_if.set_server(args.server, args.port)
     mqtt_if.start()
     time.sleep(.1)
 
