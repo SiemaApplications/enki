@@ -405,11 +405,19 @@ def main():
     parser = argparse.ArgumentParser(description="View and manipulate sparkplug payload")
     parser.add_argument('--server',
                         help='MQTT broker address', default='localhost')
-    parser.add_argument('--port', help='MQTT broker port', default=1883, type=int)
+    parser.add_argument('--port', help='MQTT broker port', type=int)
+    parser.add_argument('--cafile', help='Certificate authority used to sign MQTT certificates',
+                        type=str)
     args = parser.parse_args()
 
+    if args.port is None:
+        if args.cafile is None:
+            args.port = 1883
+        else:
+            args.port = 8883
+
     mqtt_if = MQTTInterface()
-    mqtt_if.set_server(args.server, args.port)
+    mqtt_if.set_server(args.server, port=args.port, cafile=args.cafile)
     mqtt_if.start()
     time.sleep(.1)
 

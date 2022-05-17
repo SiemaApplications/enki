@@ -2,6 +2,7 @@
 import os
 import sys
 import threading
+import ssl
 import paho.mqtt.client as mqtt
 
 import sparkplug_b_pb2
@@ -35,14 +36,24 @@ class MQTTInterface(object):
         self.client.user_data_set(self)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
-        self.client.username_pw_set(MYUSERNAME, MYPASSWORD)
+        #self.client.username_pw_set(MYUSERNAME, MYPASSWORD)
         self.subscribed_topics = ["spBv1.0/#"]
         self.forwarded_topics = {}
 
-    def set_server(self, server, port=1883):
-        """Set mqtt server address."""
+    def set_server(self, server, port=None, cafile=None):
+        """Set mqtt server information."""
+        if port is None:
+            if cafile is None:
+                port = 1883
+            else:
+                port = 8883
+
         self.server = server
         self.port = port
+        self.cafile = cafile
+        if cafile is not None:
+            self.client.tls_set(ca_certs=self.cafile, tls_version=ssl.PROTOCOL_TLS_CLIENT)
+            self.client.tls_insecure_set(True)
 
     def get_subscribed_topics(self):
         """Get list of topics subscribed to."""
